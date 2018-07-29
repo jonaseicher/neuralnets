@@ -42,7 +42,7 @@ W3 = 1e-2 * np.random.randn(c2_neurons, outputs)  # fc
 
 P1 = np.zeros((15, 15, depth1))  # pool layer 1
 
-samples = 2
+samples = 400
 data_loss = 0
 probs = np.zeros((samples, outputs))
 
@@ -76,7 +76,6 @@ def train(X, W1, W2, W3, pad=0):
     # Softmax
     ex = np.exp(scores)
     probs[sample] = ex/np.sum(ex, keepdims=True)
-    print("Propability of correct class: %s" % probs[sample, Ytr[sample]])
     loss = -np.log(probs[sample, Ytr[sample]])
     dscores = np.copy(probs)
     dscores[sample, Ytr[sample]] -= 1
@@ -105,32 +104,36 @@ def train(X, W1, W2, W3, pad=0):
 
     return loss, dW1, dW2, dW3
 
-for epoch in range(15):
+accuracy_over_time = []
+for epoch in range(8):
     print("np.sum(np.abs(W1)): %s" % np.sum(np.abs(W1)))
     print("np.sum(np.abs(W2)): %s" % np.sum(np.abs(W2)))
     print("np.sum(np.abs(W3)): %s" % np.sum(np.abs(W3)))
     data_loss = 0
+    accuracy = 0
     for sample in range(samples):
         loss, dW1, dW2, dW3 = train(Xtr2[sample], W1, W2, W3, pad)
         print("\nnp.sum(np.abs(dW1)): %s" % np.sum(np.abs(dW1)))
         print("np.sum(np.abs(dW2)): %s" % np.sum(np.abs(dW2)))
         print("np.sum(np.abs(dW3)): %s" % np.sum(np.abs(dW3)))
+        print("Propability of correct class: %s" % probs[sample, Ytr[sample]])
+        accuracy += probs[sample, Ytr[sample]]
         data_loss += loss
         W1 -= dW1 * learning_rate
         W2 -= dW2 * learning_rate
         W3 -= dW3 * learning_rate
 
+    accuracy_over_time.append(accuracy/samples)
     data_loss /= samples
     loss_over_time.append(data_loss)
     print("\nData Loss: %s" % data_loss)
     dscores = np.copy(probs)
     dscores[range(samples), Ytr[:samples]] -= 1
-    print("dscores:\n%s" % np.round(dscores, 3))
+    # print("dscores:\n%s" % np.round(dscores, 3))
     if(epoch > 7 & epoch % 5 == 0):
         learning_rate *= 0.5
 
-
-plt.ylabel('loss')
+plt.figure(1)
 plt.grid(True)
 plt.plot(np.arange(len(loss_over_time)), loss_over_time, '-',
          label='data_loss')
@@ -139,21 +142,18 @@ plt.xlabel('epoch')
 plt.ylabel('loss')
 plt.show()
 
+plt.figure(2)
+plt.ylabel('accuracy')
+plt.grid(True)
+plt.plot(np.arange(len(accuracy_over_time)), accuracy_over_time, '-',
+         label='accuracy')
+plt.legend(loc='upper left')
+plt.xlabel('epoch')
+plt.show()
+
+cifar10.plotWeights(W1)
 
 
-
-#    dW += reg*W  # regularization gradient
-#    dW2 += reg*W2
-#    # perform a parameter update
-#    W += -step_size * dW
-#    b += -step_size * db
-#    W2 += -step_size * dW2
-#    b2 += -step_size * db2
-#    if i % 100 == 0:
-#        print("iteration %d: loss %f" % (i, loss))
-#        predicted_class = np.argmax(scores, axis=1)
-#        print('training accuracy: %.2f' % (np.mean(predicted_class == y)))
-#
 #
 #plt.figure(1)
 #plt.subplot(211)

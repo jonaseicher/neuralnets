@@ -5,7 +5,7 @@ Created on Sat Jul  7 17:36:10 2018
 @author: Jonas
 """
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 def unpickle(file):
     import pickle
@@ -15,11 +15,46 @@ def unpickle(file):
 
 
 def showImage(X, interpol='spline36'):
-    import matplotlib.pyplot as plt
     img = X.reshape(3, 32, 32).transpose([1, 2, 0])
     plt.imshow(img, interpolation=interpol)
 
-
+def showWeight(W):
+    Wimg = np.copy(W) - np.min(W)
+    Wimg  /= np.max(Wimg)
+    plt.axis('off')
+    plt.imshow(Wimg)
+    
+def plotWeights(W):
+    Wimg = np.copy(W) - np.min(W)
+    Wimg  /= np.max(Wimg)
+    print("Wimg min %s, Wimg max %s, Wimg avg %s" % (np.min(Wimg), np.max(Wimg), np.average(Wimg)))
+    print("W min %s, W max %s, W avg %s" % (np.min(W), np.max(W), np.average(W)))
+    fig=plt.figure(figsize=(14, 14))
+    columns = 8
+    rows = 5
+    for i in range(1, W.shape[0] + 1):
+        fig.add_subplot(rows, columns, i)
+        plt.axis('off')
+        plt.imshow(Wimg[i-1])
+    plt.show()
+    
+    
+def plotH(H):
+    Himg = np.copy(H.transpose(1,2,0))
+    Himg -= np.min(Himg)
+    Himg /= np.max(Himg)
+    print("Himg min %s, max %s, avg %s" % (np.min(Himg), np.max(Himg), np.average(Himg)))
+    print("H min %s, max %s, avg %s" % (np.min(H), np.max(H), np.average(H)))
+    fig=plt.figure(figsize=(14, 14))
+    columns = 4
+    rows = 5
+    for i in range(1, Himg.shape[0] + 1):
+        fig.add_subplot(rows, columns, i)
+        plt.axis('off')
+        plt.imshow(Himg[i-1])
+    plt.show()
+    
+    
 def loadCIFAR10():
     workspace = 'C:/Users/Jonas/.spyder-py3/workspace_jonas'
     cifar_dir = '/cifar-10-batches-py'
