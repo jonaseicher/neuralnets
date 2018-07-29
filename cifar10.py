@@ -27,8 +27,8 @@ def showWeight(W):
 def plotWeights(W):
     Wimg = np.copy(W) - np.min(W)
     Wimg  /= np.max(Wimg)
-    print("Wimg min %s, Wimg max %s, Wimg avg %s" % (np.min(Wimg), np.max(Wimg), np.average(Wimg)))
-    print("W min %s, W max %s, W avg %s" % (np.min(W), np.max(W), np.average(W)))
+#    print("Wimg min %s, Wimg max %s, Wimg avg %s" % (np.min(Wimg), np.max(Wimg), np.average(Wimg)))
+#    print("W min %s, W max %s, W avg %s" % (np.min(W), np.max(W), np.average(W)))
     fig=plt.figure(figsize=(14, 14))
     columns = 12
     rows = 2

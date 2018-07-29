@@ -5,7 +5,8 @@ Created on Sun Jul 15 19:56:21 2018
 @author: Jonas
 """
 import cifar10
-import numpy as np
+#import numpy as np
+import cupy as np
 import matplotlib.pylab as plt
 import methods_conv1 as conv
 import time
@@ -53,7 +54,7 @@ def initWeights():
 W1, W2, W3 = initWeights()
 P1 = np.zeros((15, 15, depth1))  # pool layer 1
 
-samples = 6
+samples = 30
 data_loss = 0
 probs = np.zeros((samples, outputs))
 
@@ -67,7 +68,7 @@ def train(X, W1, W2, W3, pad=0):
     H1_relu = np.copy(H1)
     H1_relu[H1 < 0] = 0
     
-    cifar10.plotH(H1_relu[:,:,:4])
+    # cifar10.plotH(H1_relu[:,:,:4])
 
     # Pool
     for m in range(15):
@@ -82,7 +83,7 @@ def train(X, W1, W2, W3, pad=0):
     H2_relu = np.copy(H2)
     H2_relu[H2 < 0] = 0
 
-    cifar10.plotH(H2_relu[:,:,:4])
+    # cifar10.plotH(H2_relu[:,:,:4])
 
     # FC 1
     x = H2_relu.flatten()
@@ -121,26 +122,27 @@ def train(X, W1, W2, W3, pad=0):
 
 
 accuracy_over_time = []
-for epoch in range(4):
+for epoch in range(7):
 #    print("np.sum(np.abs(W1)): %s" % np.sum(np.abs(W1)))
 #    print("np.sum(np.abs(W2)): %s" % np.sum(np.abs(W2)))
 #    print("np.sum(np.abs(W3)): %s" % np.sum(np.abs(W3)))
     data_loss = 0
     accuracy = 0
+    now = time.time()
     for sample in range(samples):
-        now = time.time()
         loss, dW1, dW2, dW3 = train(Xtr2[sample], W1, W2, W3, pad)
-        print("\nnp.sum(np.abs(dW1)): %s" % np.sum(np.abs(dW1)))
-        print("np.sum(np.abs(dW2)): %s" % np.sum(np.abs(dW2)))
-        print("np.sum(np.abs(dW3)): %s" % np.sum(np.abs(dW3)))
-        print("Propability of correct class: %s" % probs[sample, Ytr[sample]])
+#        print("\nnp.sum(np.abs(dW1)): %s" % np.sum(np.abs(dW1)))
+#        print("np.sum(np.abs(dW2)): %s" % np.sum(np.abs(dW2)))
+#        print("np.sum(np.abs(dW3)): %s" % np.sum(np.abs(dW3)))
+#        print("Propability of correct class: %s" % probs[sample, Ytr[sample]])
         accuracy += probs[sample, Ytr[sample]]
         data_loss += loss
         W1 -= dW1 * 20 * learning_rate
         W2 -= dW2 * learning_rate
         W3 -= dW3 * learning_rate
-        cifar10.plotWeights(W1)
-#        print("Sample %s took %ss" % (sample, now - time.time()))
+    
+    cifar10.plotWeights(W1)
+    print("Epoch %s took %ss" % (epoch, np.round(time.time() - now, 2)))
 
     accuracy_over_time.append(accuracy/samples)
     data_loss /= samples
@@ -170,9 +172,9 @@ plt.legend(loc='upper left')
 plt.xlabel('epoch')
 plt.show()
 
-cifar10.plotWeights(W1)
-cifar10.plotH(H1_relu)
-cifar10.plotH(H2_relu)
+#cifar10.plotWeights(W1)
+#cifar10.plotH(H1_relu)
+#cifar10.plotH(H2_relu)
 
 
 #
