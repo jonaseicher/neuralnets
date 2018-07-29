@@ -36,6 +36,11 @@ width1_2 = int(width1/2)  # pooling
 width2 = width1_2 - 2 + 2*pad
 c2_neurons = depth2 * width2 * width2
 
+H1_relu_over_time = []
+H2_relu_over_time = []
+W1_over_time = []
+W2_over_time = []
+W3_over_time = []
 
 # Weights
 def initWeights():
@@ -76,7 +81,7 @@ def train(X, W1, W2, W3, pad=0):
     # ReLu 2
     H2_relu = np.copy(H2)
     H2_relu[H2 < 0] = 0
-    
+
     cifar10.plotH(H2_relu[:,:,:4])
 
     # FC 1

@@ -30,17 +30,21 @@ def plotWeights(W):
     print("Wimg min %s, Wimg max %s, Wimg avg %s" % (np.min(Wimg), np.max(Wimg), np.average(Wimg)))
     print("W min %s, W max %s, W avg %s" % (np.min(W), np.max(W), np.average(W)))
     fig=plt.figure(figsize=(14, 14))
-    columns = 8
-    rows = 5
+    columns = 12
+    rows = 2
     for i in range(1, W.shape[0] + 1):
         fig.add_subplot(rows, columns, i)
         plt.axis('off')
         plt.imshow(Wimg[i-1])
     plt.show()
+
+def plotImage(X):
+    minX = np.min(X)
+    plt.imshow(X/np.max(X))
     
     
 def plotH(H):
-    Himg = np.copy(H.transpose(1,2,0))
+    Himg = np.copy(H.transpose(2,0,1))
     Himg -= np.min(Himg)
     Himg /= np.max(Himg)
     print("Himg min %s, max %s, avg %s" % (np.min(Himg), np.max(Himg), np.average(Himg)))
